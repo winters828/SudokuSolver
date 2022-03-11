@@ -22,12 +22,17 @@ var lives;
 var selectedNum;
 var selectedTile;
 var disableSelect;
+var theme=0; //current theme selected 0=light 1=dark 2=matrix
 
 
 window.onload = function() {
     //Will wait until everything's loaded and then will run after.
-    //Run startgame function when button is clicked.
-    id("start-btn").addEventListener("click", startGame);
+    
+    //Theme buttons
+    //The Theme buttons will now start the game.
+    id("light").addEventListener("click",lightTheme);
+    id("dark").addEventListener("click",darkTheme);
+    id("matrix").addEventListener("click",matrixTheme);
 
 }
 
@@ -50,6 +55,47 @@ function startGame() {
     //Creates board based on difficulty
     generateBoard(board);
 
+    //Starts the timer
+    startTimer();
+
+    //Show number container / but why though?
+    id("number-container").classList.remove("hidden");
+
+}
+
+//Your next step seems to be getting an understanding of the timer.
+function startTimer() {
+    //Sets time remaining based on input
+    if(id("time-1").checked) timeRemaining = 180;
+    else if (id("time-2").checked) timeRemaining = 300;
+    else timeRemaining = 600;
+
+    //Sets timer for first second
+    id("timer").textContent = timeConversion(timeRemaining);
+
+    //Sets timer to update every second 
+    timer = setInterval(function() {
+        timeRemaining--;
+        //if no time remaining end the game
+        if (timeRemaining === 0) endGame();
+        id("timer").textContent = timeConversion(timeRemaining);
+    }, 1000); 
+    //Understanding setInterval();
+    //setInterval(<action taken...>,<... every 1000 milliseconds>)
+}
+
+//Converts seconds into string of MM:SS format.
+function timeConversion(time) {
+
+    if(time == 69){
+        return "ay lmao, nice"; //Stupid/funny little easter egg lol
+    } else {
+        let minutes = Math.floor(time / 60);
+        if (minutes < 10) minutes = "0" + minutes; //if a leading zero is important to you
+        let seconds = time % 60;
+        if (seconds < 10) seconds = "0" + seconds;
+        return minutes + ":" + seconds;
+    }
 }
 
 //The breakdown and understanding of this function is answered in number 1.
@@ -78,29 +124,44 @@ function generateBoard(board) {
         idCount++;
         tile.classList.add("tile");
 
-        //These two if statements are boldining the appropriate 
-        //bottom and right borders of the tile cells according to their id
-        if ((tile.id > 17 && tile.id <27) || (tile.id > 44 & tile.id < 54)) {
-            tile.classList.add("bottomBorder");
+        //Changes the theme of the 
+        if(theme!=0){ //Matrix
+            //tile.style.border = "1px solid rgb(255,255,255)";
+            tile.classList.add("mBorder");
+
+            if ((tile.id > 17 && tile.id <27) || (tile.id > 44 & tile.id < 54)) {
+                tile.style.borderBottom = "4px solid rgb(255,255,255)";
+                //tile.classList.add("mbottomBorder");
+            }
+            if ((tile.id + 1) % 9 == 3 || (tile.id + 1) % 9 == 6) {
+                tile.style.borderRight = "4px solid rgb(255,255,255)";
+                //tile.classList.add("mrightBorder"); didn't want to work...
+            }
+
+        } else {
+            //These two if statements are boldining the appropriate 
+            //bottom and right borders of the tile cells according to their id
+            if ((tile.id > 17 && tile.id <27) || (tile.id > 44 & tile.id < 54)) {
+                tile.classList.add("bottomBorder");
+            }
+            if ((tile.id + 1) % 9 == 3 || (tile.id + 1) % 9 == 6) {
+                tile.classList.add("rightBorder");
+            }
         }
 
-        if ((tile.id + 1) % 9 == 3 || (tile.id + 1) % 9 == 6) {
-            tile.classList.add("rightBorder");
-        }
 
         //Add tile to board
         id("board").appendChild(tile);
 
-//Left off at 27:14
-//Make sure you understand down to the smallest detail how and
-//why the board is generated the way it is. Once you're certain 
-//you've done that you can continue. 
     }
 }
 
 function clearPrevious() {
-    //Access all of the tiles
+    //So it seems that .tile, the .css selector, is holding the data
+    //for all tiles created both before and after they're created. 
+    
     let tiles = qsa(".tile");
+
     //Remove each tile
     for (let i = 0; i < tiles.length; i++) {
         tiles[i].remove();
@@ -118,8 +179,7 @@ function clearPrevious() {
     
 }
 
-//helper functions
-
+    //helper functions
 function qs(selector) {
     return document.querySelector(selector);
 }
@@ -133,18 +193,52 @@ function id(id) {
     return document.getElementById(id);
 }
 
+    //Themes (I feel like there's a better way to do this with radios.)
+function lightTheme() {
+    qs("body").classList.remove("dark");
+    qs("body").classList.remove("matrix");
+    theme=0;
+    startGame();
+}
+function darkTheme() {
+    qs("body").classList.remove("matrix");
+    qs("body").classList.add("dark");
+    theme=1;
+    startGame();
+}
+function matrixTheme() {
+    qs("body").classList.remove("dark");
+    qs("body").classList.add("matrix");
+    theme=2;
+    startGame();
+}
+
 
 
 
 /*So maybe I can store some personal questions here.
 
 
-
+    These are improvements that need to be included in the readme, in 
+    order to tell the difference between what I've done and what was 
+    followed in the tutorial.
     To do (to improve on the tutorial):
 
-     - Learn the rules in order to create an autosolver
+     - Learn the rules in order to create an autosolver (After finishing)
 
      - Add more boards with some kind of randomizer process.
+
+
+     - create more themes with the selectors, do something similiar 
+     to the dark and light screen settings. Also try to make the theme
+     change instant, not when you press start game.
+
+        Because the tiles id/names come up as "undefined" in the 
+    console log therefore I'm not able to switch the theme mid game, I
+    came up with a solution. keep track of the theme selected and change
+    it during generation. So now you select your theme to begin. I achieved 
+    my goal but it'd be a better challenge if the theme could be changed
+    mid game. 
 
     -----------------------------------------------------------------------
     Questions
@@ -159,7 +253,7 @@ function id(id) {
     size that would automatically push the next elements down a line after 9 elements.
     You can change the size but if the ratio of the sizes of the tiles, font and board
     aren't adjusted appropriately, you won't have a proper 9x9 board.  
-    After setting each future paragraph elements attributes (while simultaniously 
+    After setting each future paragraph elements attributes (while simultaneously 
     removing the previous board). We create a for loop which will create a tile
     for each itteration and attach it to the overall 'board' id. Other adjustments
     outside of the .css file can be made, such as the two if statements that more 
@@ -183,4 +277,7 @@ function id(id) {
     *Difference between let and var is 
     let is defined within the scope of a single block (if, for loop, etc.)
     var is restricted to a function at the least or a global variable as the most.
+
+    *.css selectors - So it seems that .tile, the .css selector, is holding the data
+    for all tiles created both before and after they're created. 
 */

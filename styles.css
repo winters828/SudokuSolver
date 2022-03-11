@@ -7,6 +7,16 @@ body.dark {
     color: white;
 }
 
+body.matrix {
+    background-color: rgb(0, 0, 0);
+    color: rgb(36, 255, 16);
+    background-image: url('matrixbackground.gif');
+    background-size: cover;
+    height: 100vh;
+    padding:0;
+    margin:0;
+}
+
 header {
     text-align: center;
     padding-bottom: 10px;
@@ -45,12 +55,12 @@ p#timer, p#lives {
     justify-content: center;
 }
 
-number-container > p {
-    border: 1px solid black;
+#number-container > p {
+    border: 1px solid rgb(0, 0, 0);
     border-radius: 20%;
-    width: 60px;
-    height: 60px;
-    font-size: 40pt;
+    width: 45px;
+    height: 45px;
+    font-size: 30pt;
     margin-left: 50px;
     margin-top: 5px;
     margin-bottom: 5px;
@@ -64,18 +74,28 @@ number-container > p {
     flex-wrap: wrap;
     justify-content: center;
     align-content: flex-start;
-    width: 300px;
-    height: 300px;
+    width: 450px;
+    height: 450px;
 }
 
 .tile { 
     border: 1px solid black;
-    width: 30px;
-    height: 30px;
+    width: 45px;
+    height: 45px;
     text-align: center;
     margin: 0px;
     vertical-align: middle;
-    font-size: 20pt;
+    font-size: 30pt;
+}
+
+.mtile { 
+    border: 1px solid black;
+    width: 45px;
+    height: 45px;
+    text-align: center;
+    margin: 0px;
+    vertical-align: middle;
+    font-size: 30pt;
 }
 
 p.selected {
@@ -92,6 +112,18 @@ p.incorrect {
 
 .bottomBorder {
     border-bottom: 4px solid black;
+}
+
+.mrightBorder {
+    border-right: 4px solid rgb(255,255,255);
+}
+
+.mbottomBorder {
+    border-bottom: 4px solid rgb(255,255,255);
+}
+
+.mBorder {
+    border: 1px solid rgb(255,255,255);
 }
 
 footer {

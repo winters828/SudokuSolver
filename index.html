@@ -9,6 +9,7 @@
     </head>
     <header>
         <h1>Sodoku</h1>
+        <h3>Please select a theme to start a new game</h3>
         <div id="setup-game">
             <div id="diff">
                 <h3>Choose Difficulty:</h3>
@@ -24,11 +25,11 @@
             </div>
             <div id="theme">
                 <h3>Choose Theme: </h3>
-                <label><input id="theme-1" type="radio" name="theme" value="light" checked>Light</label>
-                <label><input id="theme-2" type="radio" name="theme" value="dark">Dark</label>
+                <button id="light">Light</button>
+                <button id="dark">Dark</button>
+                <button id="matrix">Matrix</button>
             </div>
         </div>
-        <button id="start-btn">Create New Game!</button>
     </header>
     <body>
         <dif id="stats">
@@ -37,28 +38,34 @@
         </dif>
         <div id="game">
             <div id="board">
-                <!--so what's the point of this then?-->
-                <div id="number-container" class="hidden">
-                    <p id="one">1</p>
-                    <p id="two">2</p>
-                    <p id="three">3</p>
-                    <p id="four">4</p>
-                    <p id="five">5</p>
-                    <p id="six">6</p>
-                    <p id="seven">7</p>
-                    <p id="eight">8</p>
-                    <p id="nine">9</p>
-                </div>
-
+            </div>
+            <div id="number-container" class="hidden">
+                <p id="one">1</p>
+                <p id="two">2</p>
+                <p id="three">3</p>
+                <p id="four">4</p>
+                <p id="five">5</p>
+                <p id="six">6</p>
+                <p id="seven">7</p>
+                <p id="eight">8</p>
+                <p id="nine">9</p>
             </div>
         </div>
     </body>
     </style>
 
     <footer>
-        <p>Tutorial by RedFlyer Coding | Modified and enhanced by Samuel Winter</p>
+        <p>Tutorial by RedFlyer Coding | Modified by Samuel Winter</p>
     </footer>
 
 
 
 </html>
+
+<!---
+
+
+<button id="Light">Light</button>
+<button id="Dark">Dark</button>
+<button id="Matrix">Matrix</button>
+-->
