@@ -1,3 +1,5 @@
+//lines 142 and 38 are where you left off. Study these blocks of code!
+
 //*Please note, this code will be over commented on purpose. They're intended to be notes to learn from.
 
 //A board for each difficulty apparently. I would like deviate from the
@@ -33,6 +35,31 @@ window.onload = function() {
     id("light").addEventListener("click",lightTheme);
     id("dark").addEventListener("click",darkTheme);
     id("matrix").addEventListener("click",matrixTheme);
+
+
+    //ep. 4 00:00 - 9:30 selecting tiles STUDY CODE
+    for(let i=0; i < id("number-container").children.length; i++){
+        id("number-container").children[i].addEventListener("click", function() {
+            //If selecting is not disabled
+            if (!disableSelect) {
+                //If number is already selected.
+                if (this.classList.contains("selected")){
+                    //Then remove selection
+                    this.classList.remove("selected");
+                    selectedNum = null;
+                } else {
+                    //Deselect all other numbers
+                    for (let i = 0; i < 9; i++){
+                        id("number-container").children[i].classList.remove("selected");
+                    }
+                    //Select it and update selectedNum variable
+                    this.classList.add("selected");
+                    selectedNum=this;
+                    updateMove();
+                }
+            }
+        });
+    }
 
 }
 
@@ -114,8 +141,29 @@ function generateBoard(board) {
         if (board.charAt(i) != "-") {
             //Set tile text to correct number
             tile.textContent = board.charAt(i);
-        } else {
+        } else {//ep.4 9:30 - 14:30 Giving the board the ability to have tiles 
+                //be highlighted 
             //Add click event listener to tile
+            tile.addEventListener("click", function() {
+                //If selecting is not disabled
+                if(!disableSelect) {  
+                    //If the tile is already selected
+                    if(tile.classList.contains("selected")){
+                        tile.classList.remove("selected");
+                        selectedTile = null;
+                    } else {
+                        //Deselect all other tiles
+                        for (let i = 0; i < 81; i++) {
+                            //"Accessing any element that has the .tile class"
+                            qsa(".tile")[i].classList.remove("selected");
+                        }
+                        // Add selection and update variable 
+                        tile.classList.add("selected");
+                        selectedTile = tile;
+                        updateMove();
+                    }
+                }
+            });
         }
 
         //Assign tile id
@@ -217,7 +265,6 @@ function matrixTheme() {
 
 
 /*So maybe I can store some personal questions here.
-
 
     These are improvements that need to be included in the readme, in 
     order to tell the difference between what I've done and what was 
