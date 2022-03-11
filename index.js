@@ -224,6 +224,8 @@ function matrixTheme() {
     followed in the tutorial.
     To do (to improve on the tutorial):
 
+     - Finish the tutorial first!
+
      - Learn the rules in order to create an autosolver (After finishing)
 
      - Add more boards with some kind of randomizer process.
