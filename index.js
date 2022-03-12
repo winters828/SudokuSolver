@@ -1,4 +1,4 @@
-//lines 142 and 38 are where you left off. Study these blocks of code!
+//non-tutorial comments are USUALLY closest to the left side. 
 
 //*Please note, this code will be over commented on purpose. They're intended to be notes to learn from.
 
@@ -8,8 +8,8 @@ const easy = [
     "6------7------5-2------1---362----81--96-----71--9-4-5-2---651---78----345-------",
     "685329174971485326234761859362574981549618732718293465823946517197852643456137298"
 ];
-const medium = [
-    "--9-------4----6-758-31----15--4-36-------4-8----9-------75----3-------1--2--3--",
+const medium = [ //His tutorial had a mistake, medium[0].length == 80
+    "--9-------4----6-758-31----15--4-36-------4-8----9-------75----3-------1--2--3---",
     "619472583243985617587316924158247369926531478734698152891754236365829741472163895"
 ];
 const hard = [
@@ -18,7 +18,7 @@ const hard = [
 ];
 
 //Create variables
-var timer;
+var timer; 
 var timeRemaining;
 var lives;
 var selectedNum;
@@ -37,7 +37,24 @@ window.onload = function() {
     id("matrix").addEventListener("click",matrixTheme);
 
 
-    //ep. 4 00:00 - 9:30 selecting tiles STUDY CODE
+//ep. 4 00:00 - 9:30 selecting tiles STUDY CODE
+/*  The for loop is going through the amount of elements in "number-container"
+    So we're accessing the div id "number-container". we're going through each
+    child element with <children[i]>. window.onload seems to make this a sort
+    of endless loop that constantly scans the number container to see if any
+    of them have been clicked on hence the addEventListener function. 
+    From the two conditionals, the left is obvious while the anonymous 
+    function requires more attention.
+    if disableSelect == false (so it is enabled)
+    if this (assuming that's the 'p' or tile of number-container) contains the
+    .css attribute "selected", it will be deselected or this.classList.remove("selected");
+    The else deselects any unselected numbers in case you pick a new one while one is
+    already selected.
+    *you can also look at "this" as the [i] in children[i]
+
+    maybe rewatch from the beginning 
+
+ */
     for(let i=0; i < id("number-container").children.length; i++){
         id("number-container").children[i].addEventListener("click", function() {
             //If selecting is not disabled
@@ -55,7 +72,7 @@ window.onload = function() {
                     //Select it and update selectedNum variable
                     this.classList.add("selected");
                     selectedNum=this;
-                    updateMove();
+                    updateMove(); //doesn't seem to do anything *yet*
                 }
             }
         });
@@ -83,7 +100,7 @@ function startGame() {
     generateBoard(board);
 
     //Starts the timer
-    startTimer();
+//startTimer(); The timer was just getting a little annoying.
 
     //Show number container / but why though?
     id("number-container").classList.remove("hidden");
@@ -134,31 +151,46 @@ function generateBoard(board) {
     let idCount = 0;
     //create 81 tiles
     for (let i = 0; i<81; i++){
-        //Create a new paragraph element
+        //Create a new paragraph element (which act as the tiles)
         let tile = document.createElement("p");
 
         //If the tile shouldn't be blank 
-        if (board.charAt(i) != "-") {
+        if (board.charAt(i) != "-") { // replace . with -
             //Set tile text to correct number
             tile.textContent = board.charAt(i);
-        } else {//ep.4 9:30 - 14:30 Giving the board the ability to have tiles 
-                //be highlighted 
+        } else {
+//ep.4 9:30 - 14:30 Giving the board the ability to have tiles be highlighted
+//After the rest of the tutorial, add more by fixing same row/col crosshair clicks
             //Add click event listener to tile
             tile.addEventListener("click", function() {
                 //If selecting is not disabled
                 if(!disableSelect) {  
                     //If the tile is already selected
-                    if(tile.classList.contains("selected")){
-                        tile.classList.remove("selected");
+                    if(selectedTile==tile){ //tile.classList.contains("selected") tutorial orginal
+                        for (let i = 0; i < 81; i++) {
+                            qsa(".tile")[i].classList.remove("selected");
+                        }
                         selectedTile = null;
-                    } else {
+                    } else { 
                         //Deselect all other tiles
                         for (let i = 0; i < 81; i++) {
                             //"Accessing any element that has the .tile class"
                             qsa(".tile")[i].classList.remove("selected");
                         }
-                        // Add selection and update variable 
-                        tile.classList.add("selected");
+                        //This is an enhancement to create crosshairs for the user.
+                        for (let i = 0; i < 81; i++){
+                            //This will selected everything above and below selected tile
+                            let toprow = tile.id%9;
+                            for(let k = 0; k < 9; k++) { //A simple, take 9 actions.
+                                qsa(".tile")[toprow].classList.add("selected");
+                                toprow+=9;
+                            }
+                            //This will select everything left and right of selected tile
+                            let startrow = Math.floor(tile.id/9)*9; //gets rid of remainder
+                            for(let j = 0; j < 9; j++) {
+                                qsa(".tile")[startrow + j].classList.add("selected");
+                            } 
+                        }
                         selectedTile = tile;
                         updateMove();
                     }
@@ -269,25 +301,36 @@ function matrixTheme() {
     These are improvements that need to be included in the readme, in 
     order to tell the difference between what I've done and what was 
     followed in the tutorial.
-    To do (to improve on the tutorial):
+    ----------------------------------------------------------------------
+    Tasks (Added code that goes beyond the tutorial)
 
-     - Finish the tutorial first!
+           *Finish the tutorial first!
+        T: Learn the rules in order to create an autosolver (After finishing)
+        A:
 
-     - Learn the rules in order to create an autosolver (After finishing)
+        T: Add more boards with some kind of randomizer process.
+        A:
 
-     - Add more boards with some kind of randomizer process.
+        T: highlighting tiles is already set for which single tile is clicked on.
+    To enhance this, add an option to see what numbers are in a line from 
+    left, right, top and bottom. 
+        A: In generateBoard(), there's an event listener where the highlighting portion
+    takes place. I did some simple math to find the far left number and highlight the 
+    entire row of that start number based on the tile clicked. Similiar to left and right,
+    I started at the top row with a module function and added select to each tile +9 places
+    in the array of tiles. Combined, this makes a crosshair for the user. This was enhanced
+    further by making the if statement if(selectedTile == tile) instead of if(...contains("selected"))
+        E: 
 
-
-     - create more themes with the selectors, do something similiar 
-     to the dark and light screen settings. Also try to make the theme
-     change instant, not when you press start game.
-
-        Because the tiles id/names come up as "undefined" in the 
+        T: create more themes with the selectors, do something similiar 
+    to the dark and light screen settings. 
+        A: Because the tiles id/names come up as "undefined" in the 
     console log therefore I'm not able to switch the theme mid game, I
     came up with a solution. keep track of the theme selected and change
     it during generation. So now you select your theme to begin. I achieved 
     my goal but it'd be a better challenge if the theme could be changed
     mid game. 
+        E: Also try to make the theme change instant, not when you press start game.
 
     -----------------------------------------------------------------------
     Questions
@@ -313,8 +356,24 @@ function matrixTheme() {
 
     2. Where does the interaction between the user and board begin? Explain.
 
+    As far as highlighting goes, you need to create a listener function. The two 
+    conditions are what is being clicked (can be looked up) and the second condition
+    is a function (usually an anonymous one) that takes a specific action upon that 
+    button being pressed. This function will wait for an interaction by the user and
+    take the action included in the code of the second condition aka the anonymous function.
+    In this case, highlighting a tile on the board that is clicked.
+
     3. Creating a timer/working with time, is good knowledge for most websites 
     Explain how it was done.
+
+    This one is actually easier than what I'm used to with java. In JS, you can just 
+    create a value with a number and consider it seconds so long as you use 
+    1000 milliseconds(1 second) with the setInterval function's second condition. 
+    Within that supposedly anonymous function, you subtract one from the variable and
+    include what you want to happen each time that int ticks down by 1. Making it look
+    like time is all about formatting and that can be seen in the timeConversion function.
+
+    4. 
 
 
     ----------------------------------------------------------------------
@@ -329,4 +388,8 @@ function matrixTheme() {
 
     *.css selectors - So it seems that .tile, the .css selector, is holding the data
     for all tiles created both before and after they're created. 
+
+    *Another interesting fun fact. If a function fails to get called, all the code after
+    that won't run. Zum bespiel, in startgame(), if you fail to call the timer, the remove 
+    hide function for the number container won't work anymore. 
 */
