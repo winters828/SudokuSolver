@@ -1,6 +1,16 @@
 //non-tutorial comments are USUALLY closest to the left side. 
-
 //*Please note, this code will be over commented on purpose. They're intended to be notes to learn from.
+/* Short term task list
+
+    - Add more boards
+    - After you add at least one more board to 
+    each difficulty, then you can create the sodoku solver
+
+    back burner...
+    - 29 lines lower from the start of generateBoard(), the matrix skin
+    is having some selection issues. won't deselect.
+
+ */
 
 //A board for each difficulty apparently. I would like deviate from the
 //orginal tutorial a bit and create more of these. 
@@ -72,13 +82,13 @@ window.onload = function() {
                     //Select it and update selectedNum variable
                     this.classList.add("selected");
                     selectedNum=this;
-                    updateMove(); //doesn't seem to do anything *yet*
+                    updateMove(); //Start of ep. 4 - 14:30
                 }
             }
         });
     }
 
-}
+} //End of window.onload
 
 function startGame() {
     //Choose board difficulty
@@ -142,7 +152,104 @@ function timeConversion(time) {
     }
 }
 
-//The breakdown and understanding of this function is answered in number 1.
+//Start of ep. 4 - 14:30
+function updateMove() {
+    // If a tile and a number is selected
+    if (selectedTile && selectedNum) {
+        // Set the tile to the correct number
+        selectedTile.textContent = selectedNum.textContent;
+        //If the number matches the corresponding number in the solution key
+        if(checkCorrect(selectedTile)) {
+            //Deselect the tiles
+            for (let i = 0; i < 81; i++) {
+                qsa(".tile")[i].classList.remove("selected");
+            }
+            //Deselect the number container tiles
+            for (let i = 0; i < id("number-container").children.length; i++) {
+                id("number-container").children[i].classList.remove("selected");
+            }
+
+            //Clear the selected variables, keeping these on top fixed
+            //the stay selected switch issue.
+            selectedNum = null;
+            selectedTile = null;
+            
+            //Check if board is completed 
+            if (checkDone()) {
+                endGame();
+            }
+
+        } else { //If the number does not match the solution key
+            //Disable selecting new number for one second
+            disableSelect = true;
+            //Make the tile turn red
+            selectedTile.classList.add("incorrect");
+            //Run in one second
+            setTimeout(function() {
+                //Subtract lives by one
+                lives --;
+                //If no lives left end the game
+                if (lives === 0) {
+                    endGame();
+                } else {
+                    //If lives is not equal to zero
+                    //update lives text
+                    id("lives").textContent = "Lives Remaining: " + lives;
+                    //Renable selecting numbers and tiles
+                    disableSelect = false;
+                }
+                // Restore tile color and remove selected from both
+                selectedTile.classList.remove("incorrect");
+                //We'll have to  remove selected from all tiles here
+                for (let i = 0; i < 81; i++) {
+                    qsa(".tile")[i].classList.remove("selected");
+                }
+                selectedNum.classList.remove("selected");
+                //Clear the tiles text and clear selected variables
+                selectedTile.textContent = "";
+                selectedTile = null;
+                selectedNum = null;
+
+            }, 1000);
+        }
+    }
+
+}
+
+function checkDone() {
+    let tiles = qas(".tile");
+    for (let i = 0; i < tiles.length; i++) {
+        if (tile[i].textContent === "") return false;
+    }
+    return true;
+}
+
+function endGame() {
+    //Disable moves and stop the timer
+    disableSelect = true;
+    clearTimeout(timer);
+    //Display win or loss message
+    if (lives === 0 || timeRemaining === 0) {
+        id("lives").textContent = "You Lost!";
+    } else {
+        id("lives").textContent = "You Won!";
+    }
+}
+
+//ep. 4 - 17:00
+function checkCorrect(tile) {
+    //Set solution bsed on difficulty selection
+    let solution;
+    if (id("diff-1").checked) solution = easy[1];
+    else if(id("diff-2").checked) soulution = medium[1];
+    else board = hard[1];
+
+    //If tile's number is equal to solution's number.
+    if ( solution.charAt(tile.id) === tile.textContent) return true;
+    else return false;
+}
+
+//The breakdown and understanding of this function is answered in question one on bottom.
 function generateBoard(board) {
     //Clear previous board
     clearPrevious();
@@ -166,33 +273,47 @@ function generateBoard(board) {
                 //If selecting is not disabled
                 if(!disableSelect) {  
                     //If the tile is already selected
+
+                    let test = "mselected";
+                    //doubling up is ok for now with one extra theme, but there should
+                    //be a better system for this, one that switches multiple themes
                     if(selectedTile==tile){ //tile.classList.contains("selected") tutorial orginal
                         for (let i = 0; i < 81; i++) {
-                            qsa(".tile")[i].classList.remove("selected");
+                                qsa(".tile")[i].classList.remove("mselected");
+                                qsa(".tile")[i].classList.remove("selected");
                         }
                         selectedTile = null;
                     } else { 
                         //Deselect all other tiles
                         for (let i = 0; i < 81; i++) {
                             //"Accessing any element that has the .tile class"
-                            qsa(".tile")[i].classList.remove("selected");
+                                qsa(".tile")[i].classList.remove("mselected"); 
+                                qsa(".tile")[i].classList.remove("selected");
                         }
                         //This is an enhancement to create crosshairs for the user.
                         for (let i = 0; i < 81; i++){
                             //This will selected everything above and below selected tile
                             let toprow = tile.id%9;
-                            for(let k = 0; k < 9; k++) { //A simple, take 9 actions.
-                                qsa(".tile")[toprow].classList.add("selected");
+                            for (let k = 0; k < 9; k++) { //A simple, take 9 actions.
+                                if (theme == 2){
+                                    qsa(".tile")[toprow].classList.add("mselected");
+                                } else {
+                                    qsa(".tile")[toprow].classList.add("selected");
+                                }
                                 toprow+=9;
                             }
                             //This will select everything left and right of selected tile
                             let startrow = Math.floor(tile.id/9)*9; //gets rid of remainder
                             for(let j = 0; j < 9; j++) {
-                                qsa(".tile")[startrow + j].classList.add("selected");
+                                if (theme == 2){
+                                    qsa(".tile")[startrow + j].classList.add("mselected");
+                                } else {
+                                    qsa(".tile")[startrow + j].classList.add("selected");
+                                }
                             } 
                         }
                         selectedTile = tile;
-                        updateMove();
+                        updateMove(); //Starting ep.4 - 14:30
                     }
                 }
             });
@@ -377,7 +498,18 @@ function matrixTheme() {
 
 
     ----------------------------------------------------------------------
-    *Notes | 
+    *Notes | https://www.youtube.com/watch?v=s598MZBH0iY
+    instruction: follow the rest of video, 
+    updateMove 14:30 - 27:43 // study this section 
+    endGame 27:43 - end? // study this as well.
+
+    *Selection system - The tutorial's system was apparently uncomplete.
+    it seemed that it wouldn't deselect in some conditions. My newer and 
+    imporoved version gives the user two options. Click the board to see
+    the crosshairs and then select your number from the right, or if you
+    know the answer, select the number on the right and click a tile and 
+    if correct, crosshairs will be avoided. If wrong, crosshairs will 
+    highlight for assistance.
     
     *So an id is something to label an element in the .html file in order to 
     later access it in the javascript file. 

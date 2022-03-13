@@ -115,8 +115,12 @@ p.selected {
     background-color: lightblue;
 }
 
+p.mselected {
+    background-color: rgb(27, 218, 100);
+}
+
 p.incorrect { 
-    color: red;
+    background-color: red;
 }
 
 .rightBorder {
