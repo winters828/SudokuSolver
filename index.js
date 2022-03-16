@@ -2,29 +2,38 @@
 //*Please note, this code will be over commented on purpose. They're intended to be notes to learn from.
 /* Short term task list
 
-    - Add more boards
-    - After you add at least one more board to 
-    each difficulty, then you can create the sodoku solver
-
-    back burner...
-    - 29 lines lower from the start of generateBoard(), the matrix skin
-    is having some selection issues. won't deselect.
+    - complete the feature that adds to the tile the key pressed.
+    - doesn't actually say you win after filling the board correctly
+    - After you finish everhthing above, you then can create the 
+    solver button.
 
  */
 
 //A board for each difficulty apparently. I would like deviate from the
 //orginal tutorial a bit and create more of these. 
 const easy = [
-    "6------7------5-2------1---362----81--96-----71--9-4-5-2---651---78----345-------",
-    "685329174971485326234761859362574981549618732718293465823946517197852643456137298"
+    "6------7------5-2------1---362----81--96-----71--9-4-5-2---651---78----345-------",//board
+    "--8-9-----7----28--6-15-3--------9--5-------1--93-4---8-2--756--9-----1-----6--7-",
+    "-7--2--46-6----89-2--8--715-84-97---71-----59---13-48-697--2--8-58----6-43--8--7-",
+    "685329174971485326234761859362574981549618732718293465823946517197852643456137298",//answers
+    "385764219794512683216398754573489126941276538862153947638925471159847362427631895",
+    "875921346361754892249863715584697123713248659926135487697412538158379264432586971"
 ];
 const medium = [ //His tutorial had a mistake, medium[0].length == 80
     "--9-------4----6-758-31----15--4-36-------4-8----9-------75----3-------1--2--3---",
-    "619472583243985617587316924158247369926531478734698152891754236365829741472163895"
+    "5-72---9---6-3-7-14------6-1--49---7---5-8---8---27--5-7------92-9-8-6---4---93-8",
+    "2-----69--5---3---17---94-5--3-25-18----4----72-38-5--5-26---41---5---7--67-----3",
+    "619472583243985617587316924158247369926531478734698152891754236365829741472163895",
+    "517264893926835741483971562135496287792518436864327915378642159259183674641759328",
+    "234158697956473182178269435643925718815746329729381564592637841381594276467812953",
 ];
 const hard = [
     "-1-5-------97-42----5----7-5---3---7-6--2-41---8--5---1-4------2-3-----9-7----8--",
-    "712583694639714258845269173521436987367928415498175326184697532253841769976352841"
+    "--65----8-95----2-7--9--3------4-27----873----79-5------2--8--9-5----81-3----54--",
+    "-91-7----2-3----5----4-29-7--28-6--9---------9--1-46--1-52-7----8----5-1----1-76-",
+    "712583694639714258845269173521436987367928415498175326184697532253841769976352841",
+    "136524798895367124724981356583649271261873945479152683642718539957436812318295467",
+    "491675238273981456856432917712856349564793182938124675145267893687349521329518764"
 ];
 
 //Create variables
@@ -34,6 +43,7 @@ var lives;
 var selectedNum;
 var selectedTile;
 var disableSelect;
+var boardnum;
 var theme=0; //current theme selected 0=light 1=dark 2=matrix
 
 
@@ -62,9 +72,8 @@ window.onload = function() {
     already selected.
     *you can also look at "this" as the [i] in children[i]
 
-    maybe rewatch from the beginning 
-
  */
+
     for(let i=0; i < id("number-container").children.length; i++){
         id("number-container").children[i].addEventListener("click", function() {
             //If selecting is not disabled
@@ -90,6 +99,12 @@ window.onload = function() {
 
 } //End of window.onload
 
+/* So if you want to come up with a new board system for the different
+difficulties, you need to modify anything including 'diff-'.
+a pair in the checkCorrect function and one here in the startGame
+function. checkCorrect / startGame
+*/
+
 function startGame() {
     //Choose board difficulty
     //.checked can be used with checkboxes and radio input types
@@ -97,9 +112,14 @@ function startGame() {
     //checked 
     let board;
 
-    if(id("diff-1").checked) board = easy[0];
-    else if(id("diff-2").checked) board = medium[0];
-    else board = hard[0];
+    //For some reason, multiplying instead of dividing gives you a number
+    //between 0 and n-1. Take indexing into account, start at 0
+    boardnum = Math.floor(Math.random() * 3); //0,1,2
+    //console.log(boardnum);
+
+    if(id("diff-1").checked) board = easy[boardnum];
+    else if(id("diff-2").checked) board = medium[boardnum];
+    else board = hard[boardnum];
 
     //Set lives to 3 and enable selecting numbers and tiles. 
     lives = 3;
@@ -110,7 +130,7 @@ function startGame() {
     generateBoard(board);
 
     //Starts the timer
-//startTimer(); The timer was just getting a little annoying.
+    startTimer(); //The timer was just getting a little annoying.
 
     //Show number container / but why though?
     id("number-container").classList.remove("hidden");
@@ -159,6 +179,7 @@ function updateMove() {
         // Set the tile to the correct number
         selectedTile.textContent = selectedNum.textContent;
         //If the number matches the corresponding number in the solution key
+
         if(checkCorrect(selectedTile)) {
             //Deselect the tiles
             for (let i = 0; i < 81; i++) {
@@ -240,14 +261,41 @@ function endGame() {
 function checkCorrect(tile) {
     //Set solution bsed on difficulty selection
     let solution;
-    if (id("diff-1").checked) solution = easy[1];
-    else if(id("diff-2").checked) soulution = medium[1];
-    else board = hard[1];
 
+    if (id("diff-1").checked) {solution = easy[boardnum+3];}
+    else if(id("diff-2").checked) {solution = medium[boardnum+3];}
+    else {solution = hard[boardnum+3];}
+    
+    console.log(boardnum+3);
+    console.log(medium[boardnum+3])
+    console.log(solution);
+    
     //If tile's number is equal to solution's number.
     if ( solution.charAt(tile.id) === tile.textContent) return true;
     else return false;
 }
+
+
+
+//!!!!!!!!!!!!!!!!!!! 
+//Perfect, this strange type of function actually remains accessable
+//at anytime in the program. by looking up the keycodes for number 1-9
+//you can use a combination of a highlighted tile id and the key pressed 
+//to change that tiles value at that id. 
+//In short; regonize the keys pressed and update a global value that
+//will change the value of the tile 
+//Later you need to study this function
+
+document.onkeydown = function(e) {
+    e = e || window.event;
+    if (e.keyCode == 115 || e.keyCode == 83) {
+        alert("do something");
+    }
+};
+
+
+
+//!!!!!!!!!!!!!!!!!!!
 
 //The breakdown and understanding of this function is answered in question one on bottom.
 function generateBoard(board) {
@@ -266,8 +314,9 @@ function generateBoard(board) {
             //Set tile text to correct number
             tile.textContent = board.charAt(i);
         } else {
-//ep.4 9:30 - 14:30 Giving the board the ability to have tiles be highlighted
-//After the rest of the tutorial, add more by fixing same row/col crosshair clicks
+
+            //ep.4 9:30 - 14:30 Giving the board the ability to have tiles be highlighted
+            //After the rest of the tutorial, add more by fixing same row/col crosshair clicks
             //Add click event listener to tile
             tile.addEventListener("click", function() {
                 //If selecting is not disabled
@@ -514,6 +563,9 @@ function matrixTheme() {
     *So an id is something to label an element in the .html file in order to 
     later access it in the javascript file. 
 
+    *added 2 more boards for each difficulty, made a quick randomizer
+    for the extra boards. 
+
     *Difference between let and var is 
     let is defined within the scope of a single block (if, for loop, etc.)
     var is restricted to a function at the least or a global variable as the most.
@@ -524,4 +576,9 @@ function matrixTheme() {
     *Another interesting fun fact. If a function fails to get called, all the code after
     that won't run. Zum bespiel, in startgame(), if you fail to call the timer, the remove 
     hide function for the number container won't work anymore. 
+
+    *A good idea for future projects is to keep short term versions of files 
+    that you change.
+    
+    *later you should also filter the improvements out of these notes
 */
