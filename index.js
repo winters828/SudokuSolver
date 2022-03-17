@@ -2,10 +2,11 @@
 //*Please note, this code will be over commented on purpose. They're intended to be notes to learn from.
 /* Short term task list
 
-    - complete the feature that adds to the tile the key pressed.
-    - doesn't actually say you win after filling the board correctly
-    - After you finish everhthing above, you then can create the 
-    solver button.
+    - You then can now create the 
+    solver button. When doing this task DO NOT just fill out the tiles
+    from the solution boards. You need to do the actual calculation in
+    a way that if any board was stored properly, the solver would be able
+    to actually solve the board. 
 
  */
 
@@ -13,6 +14,8 @@
 //orginal tutorial a bit and create more of these. 
 const easy = [
     "6------7------5-2------1---362----81--96-----71--9-4-5-2---651---78----345-------",//board
+    //"685329174971485326234761859362574981549618732718293465823946517197852643456137--8",
+    //^29 is missing, use to test win condition ^
     "--8-9-----7----28--6-15-3--------9--5-------1--93-4---8-2--756--9-----1-----6--7-",
     "-7--2--46-6----89-2--8--715-84-97---71-----59---13-48-697--2--8-58----6-43--8--7-",
     "685329174971485326234761859362574981549618732718293465823946517197852643456137298",//answers
@@ -23,7 +26,7 @@ const medium = [ //His tutorial had a mistake, medium[0].length == 80
     "--9-------4----6-758-31----15--4-36-------4-8----9-------75----3-------1--2--3---",
     "5-72---9---6-3-7-14------6-1--49---7---5-8---8---27--5-7------92-9-8-6---4---93-8",
     "2-----69--5---3---17---94-5--3-25-18----4----72-38-5--5-26---41---5---7--67-----3",
-    "619472583243985617587316924158247369926531478734698152891754236365829741472163895",
+    "619472583 243985617 587316924 158247369 926531478 734698152 891754236 365829741 472163895",
     "517264893926835741483971562135496287792518436864327915378642159259183674641759328",
     "234158697956473182178269435643925718815746329729381564592637841381594276467812953",
 ];
@@ -115,7 +118,6 @@ function startGame() {
     //For some reason, multiplying instead of dividing gives you a number
     //between 0 and n-1. Take indexing into account, start at 0
     boardnum = Math.floor(Math.random() * 3); //0,1,2
-    //console.log(boardnum);
 
     if(id("diff-1").checked) board = easy[boardnum];
     else if(id("diff-2").checked) board = medium[boardnum];
@@ -179,68 +181,77 @@ function updateMove() {
         // Set the tile to the correct number
         selectedTile.textContent = selectedNum.textContent;
         //If the number matches the corresponding number in the solution key
-
-        if(checkCorrect(selectedTile)) {
-            //Deselect the tiles
-            for (let i = 0; i < 81; i++) {
-                qsa(".tile")[i].classList.remove("selected");
-            }
-            //Deselect the number container tiles
-            for (let i = 0; i < id("number-container").children.length; i++) {
-                id("number-container").children[i].classList.remove("selected");
-            }
-
-            //Clear the selected variables, keeping these on top fixed
-            //the stay selected switch issue.
-            selectedNum = null;
-            selectedTile = null;
-            
-            //Check if board is completed 
-            if (checkDone()) {
-                endGame();
-            }
-
-        } else { //If the number does not match the solution key
-            //Disable selecting new number for one second
-            disableSelect = true;
-            //Make the tile turn red
-            selectedTile.classList.add("incorrect");
-            //Run in one second
-            setTimeout(function() {
-                //Subtract lives by one
-                lives --;
-                //If no lives left end the game
-                if (lives === 0) {
-                    endGame();
-                } else {
-                    //If lives is not equal to zero
-                    //update lives text
-                    id("lives").textContent = "Lives Remaining: " + lives;
-                    //Renable selecting numbers and tiles
-                    disableSelect = false;
-                }
-                // Restore tile color and remove selected from both
-                selectedTile.classList.remove("incorrect");
-                //We'll have to  remove selected from all tiles here
-                for (let i = 0; i < 81; i++) {
-                    qsa(".tile")[i].classList.remove("selected");
-                }
-                selectedNum.classList.remove("selected");
-                //Clear the tiles text and clear selected variables
-                selectedTile.textContent = "";
-                selectedTile = null;
-                selectedNum = null;
-
-            }, 1000);
-        }
+        //this is done in this function in order to use the code elsewhere
+        containCheckCorrect(selectedTile);
     }
 
 }
 
+//not sure if using <selectedTile> twice will break it
+function containCheckCorrect(selectedTile) {
+
+    if(checkCorrect(selectedTile)) {
+        //Deselect the tiles
+        for (let i = 0; i < 81; i++) {
+            qsa(".tile")[i].classList.remove("selected");
+        }
+        //Deselect the number container tiles
+        for (let i = 0; i < id("number-container").children.length; i++) {
+            id("number-container").children[i].classList.remove("selected");
+        }
+
+        //Clear the selected variables, keeping these on top fixed
+        //the stay selected switch issue.
+        selectedNum = null;
+        selectedTile = null;
+        
+        //Check if board is completed 
+        if (checkDone()) {
+            endGame();
+        }
+
+    } else { //If the number does not match the solution key
+        //Disable selecting new number for one second
+        disableSelect = true;
+        //Make the tile turn red
+        selectedTile.classList.add("incorrect");
+        //Run in one second
+        setTimeout(function() {
+            //Subtract lives by one
+            lives --;
+            //If no lives left end the game
+            if (lives === 0) {
+                endGame();
+            } else {
+                //If lives is not equal to zero
+                //update lives text
+                id("lives").textContent = "Lives Remaining: " + lives;
+                //Renable selecting numbers and tiles
+                disableSelect = false;
+            }
+            // Restore tile color and remove selected from both
+            selectedTile.classList.remove("incorrect");
+            selectedTile.textContent = "";
+            //We'll have to  remove selected from all tiles here
+            for (let i = 0; i < 81; i++) {
+                qsa(".tile")[i].classList.remove("selected");
+            }
+            selectedNum.classList.remove("selected");
+            //Clear the tiles text and clear selected variables
+            selectedTile.textContent = "";
+            selectedTile = null;
+            selectedNum = null;
+
+        }, 1000);
+    }
+
+}
+
+//Will check if the board is fully filled out.
 function checkDone() {
-    let tiles = qas(".tile");
+    let tiles = qsa(".tile");
     for (let i = 0; i < tiles.length; i++) {
-        if (tile[i].textContent === "") return false;
+        if (tiles[i].textContent === "") return false;
     }
     return true;
 }
@@ -266,9 +277,9 @@ function checkCorrect(tile) {
     else if(id("diff-2").checked) {solution = medium[boardnum+3];}
     else {solution = hard[boardnum+3];}
     
-    console.log(boardnum+3);
-    console.log(medium[boardnum+3])
-    console.log(solution);
+    // console.log(boardnum+3);
+    // console.log(medium[boardnum+3])
+    // console.log(solution);
     
     //If tile's number is equal to solution's number.
     if (solution.charAt(tile.id) === tile.textContent) return true;
@@ -277,40 +288,39 @@ function checkCorrect(tile) {
 
 
 
-//!!!!!!!!!!!!!!!!!!! When finished, find a good place for this function
-//Okay, now you need to implement a check on if that tile is incorrect
-//and run the same process for an inccorect answer as clicking.
-//So it seems as if you can call checkCorrect(selectedTile) just like
-//on line 183 and then take the same actions if not correct.
-//Maybe you can put everything below 183 in a function of its own
-//That can then be called.
 
+//Allowing the user to use keys to enter answers for faster interaction
 document.onkeydown = function(e) {
     e = e || window.event; //Studying what this does!
-    console.log(selectedTile.id);
     if (e.keyCode == 49 || e.keyCode == 97) {
         selectedTile.textContent = 1;
+        containCheckCorrect(selectedTile);
     } else if (e.keyCode == 50 || e.keyCode == 98) {
         selectedTile.textContent = 2;
+        containCheckCorrect(selectedTile);
     } else if (e.keyCode == 51 || e.keyCode == 99) {
         selectedTile.textContent = 3;
+        containCheckCorrect(selectedTile);
     } else if (e.keyCode == 52 || e.keyCode == 100) {
         selectedTile.textContent = 4;
+        containCheckCorrect(selectedTile);
     } else if (e.keyCode == 53 || e.keyCode == 101) {
         selectedTile.textContent = 5;
+        containCheckCorrect(selectedTile);
     } else if (e.keyCode == 54 || e.keyCode == 102) {
         selectedTile.textContent = 6;
+        containCheckCorrect(selectedTile);
     } else if (e.keyCode == 55 || e.keyCode == 103) {
         selectedTile.textContent = 7;
+        containCheckCorrect(selectedTile);
     } else if (e.keyCode == 56 || e.keyCode == 104) {
         selectedTile.textContent = 8;
+        containCheckCorrect(selectedTile);
     } else if (e.keyCode == 57 || e.keyCode == 105) {
         selectedTile.textContent = 9;
+        containCheckCorrect(selectedTile);
     }
 };
-
-
-//!!!!!!!!!!!!!!!!!!!
 
 //The breakdown and understanding of this function is answered in question one on bottom.
 function generateBoard(board) {
@@ -593,6 +603,8 @@ function matrixTheme() {
 
     *A good idea for future projects is to keep short term versions of files 
     that you change.
+
+    *included the ability to type in your answer 1-9
     
     *later you should also filter the improvements out of these notes
 */
