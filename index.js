@@ -271,28 +271,43 @@ function checkCorrect(tile) {
     console.log(solution);
     
     //If tile's number is equal to solution's number.
-    if ( solution.charAt(tile.id) === tile.textContent) return true;
+    if (solution.charAt(tile.id) === tile.textContent) return true;
     else return false;
 }
 
 
 
-//!!!!!!!!!!!!!!!!!!! 
-//Perfect, this strange type of function actually remains accessable
-//at anytime in the program. by looking up the keycodes for number 1-9
-//you can use a combination of a highlighted tile id and the key pressed 
-//to change that tiles value at that id. 
-//In short; regonize the keys pressed and update a global value that
-//will change the value of the tile 
-//Later you need to study this function
+//!!!!!!!!!!!!!!!!!!! When finished, find a good place for this function
+//Okay, now you need to implement a check on if that tile is incorrect
+//and run the same process for an inccorect answer as clicking.
+//So it seems as if you can call checkCorrect(selectedTile) just like
+//on line 183 and then take the same actions if not correct.
+//Maybe you can put everything below 183 in a function of its own
+//That can then be called.
 
 document.onkeydown = function(e) {
-    e = e || window.event;
-    if (e.keyCode == 115 || e.keyCode == 83) {
-        alert("do something");
+    e = e || window.event; //Studying what this does!
+    console.log(selectedTile.id);
+    if (e.keyCode == 49 || e.keyCode == 97) {
+        selectedTile.textContent = 1;
+    } else if (e.keyCode == 50 || e.keyCode == 98) {
+        selectedTile.textContent = 2;
+    } else if (e.keyCode == 51 || e.keyCode == 99) {
+        selectedTile.textContent = 3;
+    } else if (e.keyCode == 52 || e.keyCode == 100) {
+        selectedTile.textContent = 4;
+    } else if (e.keyCode == 53 || e.keyCode == 101) {
+        selectedTile.textContent = 5;
+    } else if (e.keyCode == 54 || e.keyCode == 102) {
+        selectedTile.textContent = 6;
+    } else if (e.keyCode == 55 || e.keyCode == 103) {
+        selectedTile.textContent = 7;
+    } else if (e.keyCode == 56 || e.keyCode == 104) {
+        selectedTile.textContent = 8;
+    } else if (e.keyCode == 57 || e.keyCode == 105) {
+        selectedTile.textContent = 9;
     }
 };
-
 
 
 //!!!!!!!!!!!!!!!!!!!
@@ -323,7 +338,6 @@ function generateBoard(board) {
                 if(!disableSelect) {  
                     //If the tile is already selected
 
-                    let test = "mselected";
                     //doubling up is ok for now with one extra theme, but there should
                     //be a better system for this, one that switches multiple themes
                     if(selectedTile==tile){ //tile.classList.contains("selected") tutorial orginal
