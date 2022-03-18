@@ -74,7 +74,7 @@ but I'm uncertain about this*/
     cursor: pointer;
 }
 
-.solve-container {  
+#solve-container {  
     text-align: center; 
     height: 50px;
     text-align: center; 
@@ -82,8 +82,8 @@ but I'm uncertain about this*/
     padding-bottom: 0px;
     padding-right: 100px;
 }  
-   
-#btn {  
+
+#solve {  
     font-size: 20px;
     font: bold;  
 }  
@@ -143,14 +143,6 @@ p.incorrect {
 
 .bottomBorder {
     border-bottom: 4px solid black;
-}
-
-.mrightBorder {
-    border-right: 4px solid rgb(255,255,255);
-}
-
-.mbottomBorder {
-    border-bottom: 4px solid rgb(255,255,255);
 }
 
 .mBorder {

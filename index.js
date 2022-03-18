@@ -48,20 +48,19 @@ var selectedTile;
 var disableSelect;
 var boardnum;
 var theme=0; //current theme selected 0=light 1=dark 2=matrix
+var filled = 0; //0 = not filled / 1 = filled, for solve()
 
 
 window.onload = function() {
     //Will wait until everything's loaded and then will run after.
     
-    //Theme buttons
+    //Buttons
     //The Theme buttons will now start the game.
     id("light").addEventListener("click",lightTheme);
     id("dark").addEventListener("click",darkTheme);
     id("matrix").addEventListener("click",matrixTheme);
 
-    id("btn").addEventListener("click", function() {
-        alert("joggers");
-    });
+    id("solve").addEventListener("click", solve);
 //ep. 4 00:00 - 9:30 selecting tiles STUDY CODE
 /*  The for loop is going through the amount of elements in "number-container"
     So we're accessing the div id "number-container". we're going through each
@@ -104,6 +103,53 @@ window.onload = function() {
 
 } //End of window.onload
 
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//The solve button is hidden until a board is startGame()
+//is executed 
+
+/* Something that may help https://www.youtube.com/watch?v=tvP_FZ-D9Ng 
+start at 3 min
+
+maybe you can go through the ones that have definitive answers.
+You can iterate through each tile and solve every one that has a clear
+single answer, After that you should have more tiles that move from 
+being multi answer blocks to single answer blocks, repeat the for loop
+and continue until the board is solved.
+
+experimenting with this concept with no timer is also a good idea. 
+
+to find a single answer tile, you need to go through three things;
+row, col, and box. If there's only a single number that can be an
+answer, you can fill in that tile. If not, move onto a new tile and
+check to see if it's a single answer tile. As more get filled out,
+more single answer tiles will exist until solved. 
+
+Use a combination of checkCorrect, endGame and checkDone
+
+
+
+you also need to ask, what if the user already filled in some spaces. 
+ */
+function solve () {
+    let tiles = qsa(".tile");
+
+    let test = 0;
+    //functions don't want to work with while, works with numbers though!
+    //This will continue until the board is filled out
+    while (filled == 0){
+        checkDone();
+        
+        //Now we're constantly scanning through the board until filled
+        for (let i = 0; i < 81; i++) {
+            
+            
+        }
+        
+    }
+    
+}
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 function startGame() {
     //Choose board difficulty
     //.checked can be used with checkboxes and radio input types
@@ -128,10 +174,11 @@ function startGame() {
     generateBoard(board);
 
     //Starts the timer
-    startTimer(); //The timer was just getting a little annoying.
+//startTimer(); //Removed for testing purposes
 
-    //Show number container / but why though?
+    //Show number container and solve button
     id("number-container").classList.remove("hidden");
+    id("solve").classList.remove("hidden");
 
 }
 
@@ -249,6 +296,8 @@ function checkDone() {
     for (let i = 0; i < tiles.length; i++) {
         if (tiles[i].textContent === "") return false;
     }
+    console.log("checkDone");
+    filled = 1; //For solve() while loop
     return true;
 }
 
@@ -272,10 +321,6 @@ function checkCorrect(tile) {
     if (id("diff-1").checked) {solution = easy[boardnum+3];}
     else if(id("diff-2").checked) {solution = medium[boardnum+3];}
     else {solution = hard[boardnum+3];}
-    
-    // console.log(boardnum+3);
-    // console.log(medium[boardnum+3])
-    // console.log(solution);
     
     //If tile's number is equal to solution's number.
     if (solution.charAt(tile.id) === tile.textContent) return true;
@@ -396,16 +441,13 @@ function generateBoard(board) {
 
         //Changes the theme of the 
         if(theme!=0){ //Matrix
-            //tile.style.border = "1px solid rgb(255,255,255)";
             tile.classList.add("mBorder");
 
             if ((tile.id > 17 && tile.id <27) || (tile.id > 44 & tile.id < 54)) {
                 tile.style.borderBottom = "4px solid rgb(255,255,255)";
-                //tile.classList.add("mbottomBorder");
             }
             if ((tile.id + 1) % 9 == 3 || (tile.id + 1) % 9 == 6) {
                 tile.style.borderRight = "4px solid rgb(255,255,255)";
-                //tile.classList.add("mrightBorder"); didn't want to work...
             }
 
         } else {
