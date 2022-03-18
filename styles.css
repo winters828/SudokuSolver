@@ -74,6 +74,20 @@ but I'm uncertain about this*/
     cursor: pointer;
 }
 
+.solve-container {  
+    text-align: center; 
+    height: 50px;
+    text-align: center; 
+    padding-top: 15px;
+    padding-bottom: 0px;
+    padding-right: 100px;
+}  
+   
+#btn {  
+    font-size: 20px;
+    font: bold;  
+}  
+
 #board {
     padding-top: 10px;
     margin-top: 10px;
@@ -144,6 +158,8 @@ p.incorrect {
 }
 
 footer {
-    background-color: rgb(255, 0, 0);
+    background-color: rgb(117, 117, 117);
     text-align: center;
+    padding-top: 0px;
+    padding-bottom: 1px;
 }

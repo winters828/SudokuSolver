@@ -2,7 +2,7 @@
 //*Please note, this code will be over commented on purpose. They're intended to be notes to learn from.
 /* Short term task list
 
-    - You then can now create the 
+    - You can now create the 
     solver button. When doing this task DO NOT just fill out the tiles
     from the solution boards. You need to do the actual calculation in
     a way that if any board was stored properly, the solver would be able
@@ -59,7 +59,9 @@ window.onload = function() {
     id("dark").addEventListener("click",darkTheme);
     id("matrix").addEventListener("click",matrixTheme);
 
-
+    id("btn").addEventListener("click", function() {
+        alert("joggers");
+    });
 //ep. 4 00:00 - 9:30 selecting tiles STUDY CODE
 /*  The for loop is going through the amount of elements in "number-container"
     So we're accessing the div id "number-container". we're going through each
@@ -101,12 +103,6 @@ window.onload = function() {
     }
 
 } //End of window.onload
-
-/* So if you want to come up with a new board system for the different
-difficulties, you need to modify anything including 'diff-'.
-a pair in the checkCorrect function and one here in the startGame
-function. checkCorrect / startGame
-*/
 
 function startGame() {
     //Choose board difficulty
@@ -163,7 +159,7 @@ function startTimer() {
 //Converts seconds into string of MM:SS format.
 function timeConversion(time) {
 
-    if(time == 69){
+    if(time == 69) {
         return "ay lmao, nice"; //Stupid/funny little easter egg lol
     } else {
         let minutes = Math.floor(time / 60);
