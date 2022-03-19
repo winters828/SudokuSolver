@@ -133,21 +133,69 @@ you also need to ask, what if the user already filled in some spaces.
 function solve () {
     let tiles = qsa(".tile");
 
-    let test = 0;
     //functions don't want to work with while, works with numbers though!
     //This will continue until the board is filled out
     while (filled == 0){
         checkDone();
-        
-        //Now we're constantly scanning through the board until filled
-        for (let i = 0; i < 81; i++) {
+        //Now we can constantly scan through the board until it's filled
+        //This is all in the realm of a single tile
+        for (let tiq = 0; tiq < 81; tiq++) { //tiq = tile in question
+            //you need to ignore if the tile already has a number
+            //later, for now we need the whole board
+            //if(tiles[i].textContent == ""){}
+
+            //From a single tile, you need to scan the entire board
+            //again, meaning you need a second for loop, that's what
+            //you're missing.
+
+            //very good! Now we need to find the row col and box within
+            //The for loop
+
+//We need three for loops, one for row, col box. at the end of 
+//all three you should have an answer on if it's a single answer
+//tile or not, if it is, take the appropriate action.
+
+//You'll be collecting a set of numbers from the
+//row, col and box, if the set has 8 possibilities
+//to get rid of then you're left with one answer.
+//therefore, you're left with a single answer tile
+//and can fill it in, if not you can scan it again 
+//later (but that's what the outer most while loop
+//is for)
+
+//I need to possibly consider a new system that stores all of this into
+//a double array. it will make this work invalid but it'll still work
+//in the end at least. 
+            //This will get the column tiles.id of every tiq
+            for (let a = 0; a < 9; a++) { 
+                //console.log((a*9)+(tiq%9));
+            }
+
+            //entire row for each tiq
+            for (let b = 0; b < 9; b++) {
+                //console.log((Math.floor(tiq/9)*9)+b);
+            }
             
+            //box
+            if (tiq==0 || tiq==3 || tiq==6 || 
+                tiq==27 || tiq==30 || tiq==33 ||
+                tiq==54 || tiq==57 || tiq==60 ) {
+
+                for (let c = 0; c < 9; c++) {
+    
+                }
+            }
+
+            console.log("end of tile in question | tiq = " + tiq);
+
             
         }
+//Just to temporarly stop the infinite while loop
+filled=1;
         
-    }
+    }// End of while loop
     
-}
+}// End of solve
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 function startGame() {
