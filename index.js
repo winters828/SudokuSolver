@@ -137,59 +137,86 @@ function solve () {
     //This will continue until the board is filled out
     while (filled == 0){
         checkDone();
-        //Now we can constantly scan through the board until it's filled
-        //This is all in the realm of a single tile
-        for (let tiq = 0; tiq < 81; tiq++) { //tiq = tile in question
-            //you need to ignore if the tile already has a number
-            //later, for now we need the whole board
-            //if(tiles[i].textContent == ""){}
 
-            //From a single tile, you need to scan the entire board
-            //again, meaning you need a second for loop, that's what
-            //you're missing.
+        //An array of an array to access board id's (thereby their numbers)
+        let boardaccess = [
+            [0,1,2,3,4,5,6,7,8],
+            [9,10,11,12,13,14,15,16,17],
+            [18,19,20,21,22,23,24,25,26],
+            [27,28,29,30,31,32,33,34,35],
+            [36,37,38,39,40,41,42,43,44],
+            [45,46,47,48,49,50,51,52,53],
+            [54,55,56,57,58,59,60,61,62],
+            [63,64,65,66,67,68,69,70,71],
+            [72,73,74,75,76,77,78,79,80]
+        ];
 
-            //very good! Now we need to find the row col and box within
-            //The for loop
+        //This will go through rows, col and box of tiq
+        let set = [0,0,0,0,0,0,0,0,0];
+/*
+        00,01,02,03,04,05,06,07,08
+        10,11,12,13,14,15,16,17,18
+        20,21,22,23,24,25,26,27,28
+        30,31,32,33,34,35,36,37,38
+        40,41,42,43,44,45,46,47,48
+        50,51,52,53,54,55,56,57,58
+        60,61,62,63,64,65,66,67,68...
+*/
 
-//We need three for loops, one for row, col box. at the end of 
-//all three you should have an answer on if it's a single answer
-//tile or not, if it is, take the appropriate action.
+        //Goal: go through every tile and check to see 
+        //if they have a single easy answer. If not move on.
+        //you'll keep scanning through the board until you find 
+        //a single easy answer
 
-//You'll be collecting a set of numbers from the
-//row, col and box, if the set has 8 possibilities
-//to get rid of then you're left with one answer.
-//therefore, you're left with a single answer tile
-//and can fill it in, if not you can scan it again 
-//later (but that's what the outer most while loop
-//is for)
+        //Base tiles
+        for (let row = 0; row < 9; row++) {
+            for (let col = 0; col < 9; col++) {
 
-//I need to possibly consider a new system that stores all of this into
-//a double array. it will make this work invalid but it'll still work
-//in the end at least. 
-            //This will get the column tiles.id of every tiq
-            for (let a = 0; a < 9; a++) { 
-                //console.log((a*9)+(tiq%9));
-            }
 
-            //entire row for each tiq
-            for (let b = 0; b < 9; b++) {
-                //console.log((Math.floor(tiq/9)*9)+b);
-            }
-            
-            //box
-            if (tiq==0 || tiq==3 || tiq==6 || 
-                tiq==27 || tiq==30 || tiq==33 ||
-                tiq==54 || tiq==57 || tiq==60 ) {
+                //Check down the rows
 
-                for (let c = 0; c < 9; c++) {
-    
+                //Check over the columns 
+
+
+                //Assume we're in [1][1] or something
+                //Check the same box
+                for (let chkrow = 0; chkrow < 9; chkrow++) { //Check tiles 
+                    for (let chkcol = 0; chkcol < 9; chkcol++) {
+
+                        //If Base tile is in box 1, cycle through box 1 id's 
+                        if ((row<3 && col<3) && (chkrow<3 && chkcol<3)) {
+                            console.log("box 1 ---------");
+                            console.log("rows/cols: " + boardaccess[row][col]);
+                            console.log("chkrows/chkcols: " + boardaccess[chkrow][chkcol]);
+                        } else if (((row<3) && (col>=3 && col<=5)) && ((chkrow<3) && (chkcol>=3 && chkcol<=5))) { //box 2
+
+                        } else if (((row<3) && (col>=6)) && ((chkrow<3) && (chkcol>=6))) { //box 3
+
+                        } else if (((row>=3 && row<=5) && (col<3)) && ((chkrow>=3 && chkrow<=5) && (chkcol<3))) { //box 4
+
+                        } else if (((row>=3 && row<=5) && (col>=3 && col<=5)) && ((chkrow>=3 && chkrow<=5) && (chkcol>=3 && chkcol<=5))) { //box 5
+
+                        } else if (((row>=3 && row<=5) && (col>5)) && ((chkrow>=3 && chkrow<=5) && (chkcol>5))) { //box 6
+
+                        } else if (((row>5) && (col<3)) && ((chkrow>5) && (chkcol<3))) { //box 7
+
+                        } else if (((row>5) && (col>=3 && col<=5)) && ((chkrow>5) && (chkcol>=3 && chkcol<=5))) { //box 8
+
+                        } else if (((row>5) && (col>5)) && ((chkrow>5) && (chkcol>5))) { //box 9
+
+                        } 
+
+                    }
                 }
+
+
+
             }
-
-            console.log("end of tile in question | tiq = " + tiq);
-
-            
         }
+
+
+
+
 //Just to temporarly stop the infinite while loop
 filled=1;
         
@@ -670,6 +697,10 @@ function matrixTheme() {
     if correct, crosshairs will be avoided. If wrong, crosshairs will 
     highlight for assistance.
     
+    *Keep it just in case 
+    //console.log((a*9)+(tiq%9));
+    //console.log((Math.floor(tiq/9)*9)+b);
+
     *So an id is something to label an element in the .html file in order to 
     later access it in the javascript file. 
 
