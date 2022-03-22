@@ -16,17 +16,17 @@ const easy = [
     "6------7------5-2------1---362----81--96-----71--9-4-5-2---651---78----345-------",//board
     //"685329174971485326234761859362574981549618732718293465823946517197852643456137--8",
     //^29 is missing, use to test win condition ^
-    "--8-9-----7----28--6-15-3--------9--5-------1--93-4---8-2--756--9-----1-----6--7-",
+    "8-6-1------3-64-9-9-----816-8-396---7-2-4-3-9---572-8-521-----4-3-75-2------2-1-5",
     "-7--2--46-6----89-2--8--715-84-97---71-----59---13-48-697--2--8-58----6-43--8--7-",
     "685329174971485326234761859362574981549618732718293465823946517197852643456137298",//answers
-    "385764219794512683216398754573489126941276538862153947638925471159847362427631895",
+    "856917423213864597947235816185396742762148359394572681521683974439751268678429135",
     "875921346361754892249863715584697123713248659926135487697412538158379264432586971"
 ];
 const medium = [ //His tutorial had a mistake, medium[0].length == 80
     "--9-------4----6-758-31----15--4-36-------4-8----9-------75----3-------1--2--3---",
     "5-72---9---6-3-7-14------6-1--49---7---5-8---8---27--5-7------92-9-8-6---4---93-8",
     "2-----69--5---3---17---94-5--3-25-18----4----72-38-5--5-26---41---5---7--67-----3",
-    "619472583 243985617 587316924 158247369 926531478 734698152 891754236 365829741 472163895",
+    "619472583243985617587316924158247369926531478734698152891754236365829741472163895",
     "517264893926835741483971562135496287792518436864327915378642159259183674641759328",
     "234158697956473182178269435643925718815746329729381564592637841381594276467812953",
 ];
@@ -48,7 +48,6 @@ var selectedTile;
 var disableSelect;
 var boardnum;
 var theme=0; //current theme selected 0=light 1=dark 2=matrix
-var filled = 0; //0 = not filled / 1 = filled, for solve()
 
 
 window.onload = function() {
@@ -107,122 +106,209 @@ window.onload = function() {
 //The solve button is hidden until a board is startGame()
 //is executed 
 
-/* Something that may help https://www.youtube.com/watch?v=tvP_FZ-D9Ng 
-start at 3 min
 
-maybe you can go through the ones that have definitive answers.
-You can iterate through each tile and solve every one that has a clear
-single answer, After that you should have more tiles that move from 
-being multi answer blocks to single answer blocks, repeat the for loop
-and continue until the board is solved.
-
-experimenting with this concept with no timer is also a good idea. 
-
-to find a single answer tile, you need to go through three things;
-row, col, and box. If there's only a single number that can be an
-answer, you can fill in that tile. If not, move onto a new tile and
-check to see if it's a single answer tile. As more get filled out,
-more single answer tiles will exist until solved. 
-
-Use a combination of checkCorrect, endGame and checkDone
-
-
-
-you also need to ask, what if the user already filled in some spaces. 
- */
 function solve () {
-    let tiles = qsa(".tile");
-
+    console.log("entered solve()");
     //functions don't want to work with while, works with numbers though!
     //This will continue until the board is filled out
-    while (filled == 0){
-        checkDone();
 
-        //An array of an array to access board id's (thereby their numbers)
-        let boardaccess = [
-            [0,1,2,3,4,5,6,7,8],
-            [9,10,11,12,13,14,15,16,17],
-            [18,19,20,21,22,23,24,25,26],
-            [27,28,29,30,31,32,33,34,35],
-            [36,37,38,39,40,41,42,43,44],
-            [45,46,47,48,49,50,51,52,53],
-            [54,55,56,57,58,59,60,61,62],
-            [63,64,65,66,67,68,69,70,71],
-            [72,73,74,75,76,77,78,79,80]
-        ];
+    
+    //An array of an array to access board id's (thereby their numbers)
+    //We need this due to the orginal way the board was established by
+    //the tutorial unfortunately 
+        
+        
+    
+    /* perhaps then something can be learned from this.
+    instead of using a while loop, you need to understand the
+    concept of backtracing through recursion. You can keep 
+    your process scanning through the board but you should get
+    rid of the while loop and instead use recursion.
+    
+    You need to understand what goes in and what comes out of
+    this block of code below, it needs to be turned into a 
+    function named "possible" that returns true if a number
+    is possible and false if NO number is possible. It will 
+    take in row, col and the number between 1-9 that's being 
+    tested. If the number being tested shows up in the set,
+    it is possible. tiles can just be passed down too for now
+    so we can keep access to them out here as well.
+    */
 
-        //This will go through rows, col and box of tiq
-        let set = [0,0,0,0,0,0,0,0,0];
-/*
-        00,01,02,03,04,05,06,07,08
-        10,11,12,13,14,15,16,17,18
-        20,21,22,23,24,25,26,27,28
-        30,31,32,33,34,35,36,37,38
-        40,41,42,43,44,45,46,47,48
-        50,51,52,53,54,55,56,57,58
-        60,61,62,63,64,65,66,67,68...
-*/
-
-        //Goal: go through every tile and check to see 
-        //if they have a single easy answer. If not move on.
-        //you'll keep scanning through the board until you find 
-        //a single easy answer
-
-        //Base tiles
-        for (let row = 0; row < 9; row++) {
-            for (let col = 0; col < 9; col++) {
-
-
-                //Check down the rows
-
-                //Check over the columns 
+    //don't need it in solve
+    let tiles = qsa(".tile");
+    
+    //I know it sucks but the way the tutorial was structured 
+    //it has to be done this way. Now doing more to build on the 
+    //tutorial, I see how poorly it was done and would have done 
+    //the entire project in a completely different way 
+    let boardaccess = [
+        [0,1,2,3,4,5,6,7,8],
+        [9,10,11,12,13,14,15,16,17],
+        [18,19,20,21,22,23,24,25,26],
+        [27,28,29,30,31,32,33,34,35],
+        [36,37,38,39,40,41,42,43,44],
+        [45,46,47,48,49,50,51,52,53],
+        [54,55,56,57,58,59,60,61,62],
+        [63,64,65,66,67,68,69,70,71],
+        [72,73,74,75,76,77,78,79,80]
+    ];
+    
+    //Base tiles
+    for (let row = 0; row < 9; row++) {
+        for (let col = 0; col < 9; col++) {
 
 
-                //Assume we're in [1][1] or something
-                //Check the same box
-                for (let chkrow = 0; chkrow < 9; chkrow++) { //Check tiles 
-                    for (let chkcol = 0; chkcol < 9; chkcol++) {
-
-                        //If Base tile is in box 1, cycle through box 1 id's 
-                        if ((row<3 && col<3) && (chkrow<3 && chkcol<3)) {
-                            console.log("box 1 ---------");
-                            console.log("rows/cols: " + boardaccess[row][col]);
-                            console.log("chkrows/chkcols: " + boardaccess[chkrow][chkcol]);
-                        } else if (((row<3) && (col>=3 && col<=5)) && ((chkrow<3) && (chkcol>=3 && chkcol<=5))) { //box 2
-
-                        } else if (((row<3) && (col>=6)) && ((chkrow<3) && (chkcol>=6))) { //box 3
-
-                        } else if (((row>=3 && row<=5) && (col<3)) && ((chkrow>=3 && chkrow<=5) && (chkcol<3))) { //box 4
-
-                        } else if (((row>=3 && row<=5) && (col>=3 && col<=5)) && ((chkrow>=3 && chkrow<=5) && (chkcol>=3 && chkcol<=5))) { //box 5
-
-                        } else if (((row>=3 && row<=5) && (col>5)) && ((chkrow>=3 && chkrow<=5) && (chkcol>5))) { //box 6
-
-                        } else if (((row>5) && (col<3)) && ((chkrow>5) && (chkcol<3))) { //box 7
-
-                        } else if (((row>5) && (col>=3 && col<=5)) && ((chkrow>5) && (chkcol>=3 && chkcol<=5))) { //box 8
-
-                        } else if (((row>5) && (col>5)) && ((chkrow>5) && (chkcol>5))) { //box 9
-
-                        } 
-
+            if (tiles[boardaccess[row][col]].textContent == "") {
+                console.log("Start of tile " + tiles[boardaccess[row][col]].id);
+                for (let n = 1; n <= 9; n++) {
+                    //console.log(n + ": " + possible(row, col, n, tiles, boardaccess));
+                    //console.log(possible(row,col,n,tiles,boardaccess) + "  n: " + n);
+                    console.log("  n: " + n);
+                    if (possible(row,col,n,tiles,boardaccess)) {
+                        console.log("possible n: " + n);
+                        tiles[boardaccess[row][col]].textContent = n;
+                        solve();
+                        tiles[boardaccess[row][col]].textContent = "";
                     }
                 }
-
-
-
+                //tiles[boardaccess[row][col]].textContent = "";
+                console.log("returned");
+                return;
             }
-        }
+           
+            
 
-
-
-
-//Just to temporarly stop the infinite while loop
-filled=1;
-        
-    }// End of while loop
+        }// End of base tile col
+    }// End of base tile row
+    
+    
+    
+    
     
 }// End of solve
+
+
+function possible(row,col,n,tiles,boardaccess) {
+    
+    
+    
+    //This will go through rows, col and box of tiq
+    /*
+    00,01,02,03,04,05,06,07,08
+    10,11,12,13,14,15,16,17,18
+    20,21,22,23,24,25,26,27,28
+    30,31,32,33,34,35,36,37,38
+    40,41,42,43,44,45,46,47,48
+    50,51,52,53,54,55,56,57,58
+    60,61,62,63,64,65,66,67,68...
+    */
+
+
+    //Delete if next plan returns proper results
+    //Checks down the rows of the current base tile / vertical check
+    // console.log("-------------- Base tile: " + boardaccess[row][col]);
+    // for (let chkrow = 0; chkrow < 9; chkrow++) {
+    //     //console.log("checking down the rows: " + boardaccess[chkrow][col]);
+    //     for (let chkset = 0; chkset < 9; chkset++) {
+    //         //console.log("set[chkset]: " + set[chkset] + "   tiles.textContent: " + tiles[boardaccess[chkrow][col]].textContent);
+    //         if(set[chkset] == tiles[boardaccess[chkrow][col]].textContent) {
+    //             //console.log("it's a match ^");
+    //             set[chkset]=-1;
+    //             //Now we're going through the process of elimination 
+    //         }
+    //     }
+    // }
+
+    //console.log("row, n: " + n);
+    for (let i = 0; i < 9; i++) {
+        if (tiles[boardaccess[row][i]].textContent == n) {
+            return false;
+        }
+    }
+
+    //Delete if next plan returns proper results
+    //Checks over the columns of the current base tile / horizontal check
+    // for (let chkcol = 0; chkcol < 9; chkcol++) {    
+    //     //console.log("checking over the columns: " + boardaccess[row][chkcol]);
+    //     for (let chkset = 0; chkset < 9; chkset++) {
+    //         //console.log("set[chkset]: " + set[chkset] + "   tiles.textContent: " + tiles[boardaccess[row][chkcol]].textContent);
+    //         if (set[chkset] == tiles[boardaccess[row][chkcol]].textContent) {
+    //             //console.log("it's a match ^");
+    //             set[chkset]=-1;
+    //         }
+    //     }
+    // }
+    //console.log("col n: " + n);
+    for (let i = 0; i < 9; i++) {
+        if (tiles[boardaccess[i][col]].textContent == n) {
+            return false;
+        }
+    }
+
+    //console.log("box n: " + n);
+    //Checks all the numbers in the same box
+    for (let chkrow = 0; chkrow < 9; chkrow++) { //Check tiles 
+        for (let chkcol = 0; chkcol < 9; chkcol++) {
+
+            for (let chkset = 0; chkset < 9; chkset++) {
+
+                //If Base tile is in box 1, cycle through box 1 id's 
+                if ((row<3 && col<3) && (chkrow<3 && chkcol<3)) {
+                    if (n == tiles[boardaccess[chkrow][chkcol]].textContent) {
+                        return false;
+                    }
+                } else if (((row<3) && (col>=3 && col<=5)) && ((chkrow<3) && (chkcol>=3 && chkcol<=5))) { //box 2
+                    if (n == tiles[boardaccess[chkrow][chkcol]].textContent) {
+                        return false;
+                    }
+                } else if (((row<3) && (col>=6)) && ((chkrow<3) && (chkcol>=6))) { //box 3
+                    if (n == tiles[boardaccess[chkrow][chkcol]].textContent) {
+                        return false;
+                    }
+                } else if (((row>=3 && row<=5) && (col<3)) && ((chkrow>=3 && chkrow<=5) && (chkcol<3))) { //box 4
+                    if (n == tiles[boardaccess[chkrow][chkcol]].textContent) {
+                        return false;
+                    }
+                } else if (((row>=3 && row<=5) && (col>=3 && col<=5)) && ((chkrow>=3 && chkrow<=5) && (chkcol>=3 && chkcol<=5))) { //box 5
+                    if (n == tiles[boardaccess[chkrow][chkcol]].textContent) {
+                        return false;
+                    }
+                } else if (((row>=3 && row<=5) && (col>5)) && ((chkrow>=3 && chkrow<=5) && (chkcol>5))) { //box 6
+                    if (n == tiles[boardaccess[chkrow][chkcol]].textContent) {
+                        return false;
+                    }
+                } else if (((row>5) && (col<3)) && ((chkrow>5) && (chkcol<3))) { //box 7
+                    if (n == tiles[boardaccess[chkrow][chkcol]].textContent) {
+                        return false;
+                    }
+                } else if (((row>5) && (col>=3 && col<=5)) && ((chkrow>5) && (chkcol>=3 && chkcol<=5))) { //box 8
+                    if (n == tiles[boardaccess[chkrow][chkcol]].textContent) {
+                        return false;
+                    }
+                } else if (((row>5) && (col>5)) && ((chkrow>5) && (chkcol>5))) { //box 9
+                    if (n == tiles[boardaccess[chkrow][chkcol]].textContent) {
+                        return false;
+                    }
+                }// End of all boxes 1-9
+                
+            }
+
+        }
+    }// End of check in box 
+
+    return true;
+
+
+
+}// End of possible()
+
+
+
+
+
+
+
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 function startGame() {
@@ -724,4 +810,11 @@ function matrixTheme() {
     *included the ability to type in your answer 1-9
     
     *later you should also filter the improvements out of these notes
+
+    *I think what I learned most about this is that the orginal tutorial guide went
+    about this completely wrong. They went down a linear tile.id assignment 
+    when what he should have done was make an array in an array and organize 
+    the tiles that way. I've gone ahead and combined the orginal concept with 
+    my own for the solution function but I think if I had to do this over, it 
+    would be done in a completely different way. 
 */
